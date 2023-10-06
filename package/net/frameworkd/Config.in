@@ -1,0 +1,14 @@
+menuconfig BR2_PACKAGE_FRAMEWORKD
+    bool "framework_demoon"
+    help
+        Support frameworkd package
+
+if BR2_PACKAGE_FRAMEWORKD
+config BR2_PACKAGE_FRAMEWORKD_URL
+    string "URL"
+    default ""
+config BR2_PACKAGE_FRAMEWORKD_REV
+    string "Revision"
+    default "develop"
+endif
+
