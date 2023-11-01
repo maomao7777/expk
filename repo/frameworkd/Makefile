@@ -14,13 +14,13 @@ USR_LIB_SYSTEMD_PATH    ?= /usr/lib/systemd/system
 CFLAGS                  +=  -std=c99                                    \
                             -I$(PWD)/include
 COMMON_LIBS             =
-TTTEST= test--maomao
+MTEST = this is maomao test print
 
 .PHONY: all
 all: $(BUILD_PATH) $(APP_NAME)
 
 $(BUILD_PATH):
-	@echo $(TTTEST)
+	@echo $(MTEST)
 	$(SILENCE)mkdir -p $(BUILD_PATH)
 
 $(OBJECTS): $(BUILD_PATH)/%.o:$(SRC_DIR)/%.c
