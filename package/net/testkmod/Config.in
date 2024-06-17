@@ -1,0 +1,5 @@
+menuconfig BR2_PACKAGE_TESTKMOD
+    bool "test_kmod"
+    help
+        Support test kernel module package
+

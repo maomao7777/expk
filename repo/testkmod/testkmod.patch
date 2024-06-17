@@ -1,0 +1,68 @@
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 5b01870e8..c5bbb64d0 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -489,4 +489,5 @@ source "drivers/misc/ocxl/Kconfig"
+ source "drivers/misc/cardreader/Kconfig"
+ source "drivers/misc/habanalabs/Kconfig"
+ source "drivers/misc/uacce/Kconfig"
++source "drivers/misc/test-ko/Kconfig"
+ endmenu
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 3fd91279b..a8a7d41fd 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -58,3 +58,4 @@ obj-$(CONFIG_HABANA_AI)		+= habanalabs/
+ obj-$(CONFIG_UACCE)		+= uacce/
+ obj-$(CONFIG_XILINX_SDFEC)	+= xilinx_sdfec.o
+ obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
++obj-$(CONFIG_TEST_KO)		+= test-ko/
+diff --git a/drivers/misc/test-ko/Kconfig b/drivers/misc/test-ko/Kconfig
+new file mode 100644
+index 000000000..f325bf017
+--- /dev/null
++++ b/drivers/misc/test-ko/Kconfig
+@@ -0,0 +1,4 @@
++config TEST_KO
++	tristate "Expk test kernel module"
++	help
++	  This is test kernel module for expk.
+\ No newline at end of file
+diff --git a/drivers/misc/test-ko/Makefile b/drivers/misc/test-ko/Makefile
+new file mode 100644
+index 000000000..c50e5acd8
+--- /dev/null
++++ b/drivers/misc/test-ko/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++obj-$(CONFIG_TEST_KO) += testko.o
+\ No newline at end of file
+diff --git a/drivers/misc/test-ko/testko.c b/drivers/misc/test-ko/testko.c
+new file mode 100644
+index 000000000..41aafd588
+--- /dev/null
++++ b/drivers/misc/test-ko/testko.c
+@@ -0,0 +1,23 @@
++/* testko.c */
++#include <linux/init.h>
++#include <linux/module.h>
++  
++MODULE_DESCRIPTION("testko");
++MODULE_LICENSE("GPL");
++
++static int hello_init(void)
++{
++ printk(KERN_INFO "Hello world !\n");
++ return 0;
++}
++  
++static void hello_exit(void)
++{
++ printk(KERN_INFO "ByeBye !\n");
++}
++  
++module_init(hello_init);
++//When u use insmod, it will enter hello_init function
++
++module_exit(hello_exit);
++//When u use rmmod, it will enter hello_exit function

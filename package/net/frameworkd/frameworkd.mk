@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FRAMEWORKD_SITE="$(TOPDIR)/dl/frameworkd"
+FRAMEWORKD_SITE="$(TOPDIR)/expk/repo/frameworkd"
 # FRAMEWORK_DEMON_DEPENDENCIES=systemd
 FRAMEWORKD_CFLAGS = "$(TARGET_CFLAGS) -I$(STAGING_DIR)/usr/include"
 
