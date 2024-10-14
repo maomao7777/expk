@@ -3,6 +3,9 @@ READFILE="/etc/fwtool.conf"
 # ROOT_PART will be replaced in Makefile
 ROOT_PART=/dev/mmcblk0p3
 
+INIT_NET_FILE="/storage/initnet"
+TARGET_LINK="/etc/init.d/S40network"
+
 start() {
 printf 'Starting init storage overlay'
 # mount -o remount,ro /
@@ -28,8 +31,8 @@ mount $ROOT_PART /storage
 rm -rf /storage/overlayfs/
 while read DIR; do
         if [ x"${DIR:0:1}" != x"#" ]&&[ x"${DIR:0:1}" != x"" ] ; then
-                UPPER_DIR=/storage/overlayfs/${DIR}_rw/upper
-                WORK_DIR=/storage/overlayfs/${DIR}_rw/work
+                UPPER_DIR=/storage/overlayfs${DIR}_rw/upper
+                WORK_DIR=/storage/overlayfs${DIR}_rw/work
                 mkdir -p ${UPPER_DIR}
                 mkdir -p ${WORK_DIR}
                 OPTS="-o lowerdir=${DIR},upperdir=${UPPER_DIR},workdir=${WORK_DIR}"
@@ -37,13 +40,31 @@ while read DIR; do
         fi
 done < $READFILE
 
+
+if [ -f "$INIT_NET_FILE" ]; then
+    if [ -e "$TARGET_LINK" ]; then
+        rm -f "$TARGET_LINK"
+        echo "Removed existing $TARGET_LINK."
+    fi
+    ln -s "$INIT_NET_FILE" "$TARGET_LINK"
+    echo "Linked $INIT_NET_FILE to $TARGET_LINK."
+else
+    echo "$INIT_NET_FILE does not exist."
+fi
+
 }
 
 
 case "$1" in
-	start)
-		"$1";;
-	*)
-		echo "Usage: $0 {start}"
-		exit 1
+        start)
+        "$1"
+        ;;
+        stop)
+	echo "no uninitOverlay "
+	;;
+        restart|reload)
+	echo "no uninitOverlay "
+	;;
+        *)
+        exit 1
 esac
