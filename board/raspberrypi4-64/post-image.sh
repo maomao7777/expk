@@ -24,4 +24,7 @@ genimage \
 	--outputpath "${BINARIES_DIR}" \
 	--config "${GENIMAGE_CFG}"
 
+echo  "combine boot.vfat and rootfs.ext4 -> fw rom"
+cat ${BINARIES_DIR}/boot.vfat ${BINARIES_DIR}/rootfs.ext4 > ${BINARIES_DIR}/rpi4fw.rom
+echo  "output to ${BINARIES_DIR}"
 exit $?
