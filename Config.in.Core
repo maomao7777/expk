@@ -1,2 +1,3 @@
 comment "Core Packages"
 source "expk/package/net/frameworkd/Config.in"
+source "expk/package/net/testkmod/Config.in"
