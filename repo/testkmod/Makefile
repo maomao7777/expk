@@ -26,9 +26,12 @@ all:
 
 clean:
 	$(MAKE) -C '$(LINUX_DIR)' M='$(PWD)' clean
+
 config:
+
+install:
+	@echo "install do nothing"
 
 endif
 
 .PHONY: config clean
-
