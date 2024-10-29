@@ -1,7 +1,7 @@
 #!/bin/sh
 READFILE="/etc/fwtool.conf"
 # ROOT_PART will be replaced in Makefile
-ROOT_PART=/dev/mmcblk0p3
+ROOT_PART=/dev/mmcblk0p4
 
 INIT_NET_FILE="/storage/initnet"
 TARGET_LINK="/etc/init.d/S40network"
