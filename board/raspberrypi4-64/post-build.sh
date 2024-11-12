@@ -7,6 +7,9 @@ rm -rf ${TARGET_DIR}/storage
 mkdir ${TARGET_DIR}/storage
 install ${BASEDIR}/fwtool.conf  ${TARGET_DIR}/etc/
 install ${BASEDIR}/fwupd.sh  ${TARGET_DIR}/etc/
+install ${BASEDIR}/insmodI2c.sh  ${TARGET_DIR}/etc/
+install ${BASEDIR}/initWlan.sh  ${TARGET_DIR}/etc/
+install ${BASEDIR}/hostapdTest.sh  ${TARGET_DIR}/etc/
 install ${BASEDIR}/initOverlay.sh  ${TARGET_DIR}/etc/init.d/S00initOverlay
 install ${BASEDIR}/initNetconf.sh  ${TARGET_DIR}/etc/init.d/S40network
 

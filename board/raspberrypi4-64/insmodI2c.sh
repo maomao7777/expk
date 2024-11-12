@@ -1,0 +1,6 @@
+#!/bin/sh
+#i2ctransfer -f -y 1 w6@0x60 0x40 0x00 0x00 0x00 0x00 0x00 
+#sleep 0.1
+#i2ctransfer -f -y 1 r3@0x60
+modprobe i2c-bcm2835
+modprobe i2c-dev
