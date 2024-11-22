@@ -5,13 +5,29 @@ set -u
 set -e
 rm -rf ${TARGET_DIR}/storage
 mkdir ${TARGET_DIR}/storage
+
+#add file ref-able to /etc
 install ${BASEDIR}/fwtool.conf  ${TARGET_DIR}/etc/
 install ${BASEDIR}/hostapdTest.conf  ${TARGET_DIR}/etc/
 install ${BASEDIR}/fwupd.sh  ${TARGET_DIR}/etc/
 install ${BASEDIR}/insmodI2c.sh  ${TARGET_DIR}/etc/
 install ${BASEDIR}/initWlan.sh  ${TARGET_DIR}/etc/
+install ${BASEDIR}/exdhcpc.script  ${TARGET_DIR}/etc/
+
+#handle dir init.d
 install ${BASEDIR}/initOverlay.sh  ${TARGET_DIR}/etc/init.d/S00initOverlay
 install ${BASEDIR}/initNetconf.sh  ${TARGET_DIR}/etc/init.d/S40network
+threshold="S40network"
+for file in ${TARGET_DIR}/etc/init.d/S??*; do
+    if [ -f "$file" ]; then
+        filename=$(basename "$file")
+        echo "exist $filename"
+        if [ "$filename" \> "$threshold" ]; then
+            echo "delete: $file"
+            rm -f "$file"
+        fi
+    fi
+done
 
 # Add a console on tty1
 if [ -e ${TARGET_DIR}/etc/inittab ]; then

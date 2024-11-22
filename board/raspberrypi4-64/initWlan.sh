@@ -24,8 +24,8 @@ case "$1" in
 	ifconfig $BRIDGE_NAME $INIT_STATIC_IP up
 	ifconfig lo up
 
-	udhcpc -i $BRIDGE_NAME -b
-	hostapd -B /storage/hostapd.conf
+	udhcpc -i $BRIDGE_NAME -s /etc/exdhcpc.script -b
+	hostapd -B /etc/hostapdTest.conf
 	;;
   stop)
 	printf "uninit network config: "
