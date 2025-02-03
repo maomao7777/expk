@@ -43,5 +43,7 @@ if [ -e ${TARGET_DIR}/etc/inittab ]; then
     fi
 fi
 
+install -m 0644 -D ${BASEDIR}/extlinux.conf ${BINARIES_DIR}/extlinux/extlinux.conf
+
 current_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "build time: $current_time" > ${TARGET_DIR}/etc/rversion

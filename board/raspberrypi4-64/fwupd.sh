@@ -7,7 +7,7 @@ ROOTFS_SIZE=120
 
 boot_img="/tmp/boot.vfat"
 mnt_dir="/tmp/mntbootlo"
-cmdline_file="$mnt_dir/cmdline.txt"
+cmdline_file="$mnt_dir/extlinux/extlinux.conf"
 root_param=$(grep -o 'root=/dev/mmcblk0p[23]' /proc/cmdline)
 
 #down all netif
@@ -49,12 +49,14 @@ dd if="$IMG_FILE" of=rootfs.ext2 bs=1M skip=$BOOT_SIZE count=$ROOTFS_SIZE
 mkdir -p "$mnt_dir"
 mount -o loop "$boot_img" "$mnt_dir"
 if [ "$root_param" = "root=/dev/mmcblk0p2" ]; then
-    echo "root=/dev/mmcblk0p3 rootwait console=tty1 console=ttyAMA0,115200" > "$cmdline_file"
+    sed -i 's|root=/dev/mmcblk0p2|root=/dev/mmcblk0p3|' "$cmdline_file"
+    echo "change rootfs to /dev/mmcblk0p3"
 else
-    echo "root=/dev/mmcblk0p2 rootwait console=tty1 console=ttyAMA0,115200" > "$cmdline_file"
+    sed -i 's|root=/dev/mmcblk0p3|root=/dev/mmcblk0p2|' "$cmdline_file"
+    echo "change rootfs -> /dev/mmcblk0p2"
 fi
 echo "-------------------------------------------"
-echo "cmdline.txt update :"
+echo "extlinux.conf update :"
 echo "$(cat $cmdline_file)"
 echo "-------------------------------------------"
 umount "$mnt_dir"
