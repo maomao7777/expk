@@ -13,6 +13,7 @@ install ${BASEDIR}/fwupd.sh  ${TARGET_DIR}/etc/
 install ${BASEDIR}/insmodI2c.sh  ${TARGET_DIR}/etc/
 install ${BASEDIR}/initWlan.sh  ${TARGET_DIR}/etc/
 install ${BASEDIR}/exdhcpc.script  ${TARGET_DIR}/etc/
+install ${BASEDIR}/httpd.conf  ${TARGET_DIR}/etc/
 
 #handle dir init.d
 install ${BASEDIR}/initOverlay.sh  ${TARGET_DIR}/etc/init.d/S00initOverlay
@@ -44,6 +45,11 @@ if [ -e ${TARGET_DIR}/etc/inittab ]; then
 fi
 
 install -m 0644 -D ${BASEDIR}/extlinux.conf ${BINARIES_DIR}/extlinux/extlinux.conf
+
+mkdir -p ${TARGET_DIR}/root/web
+cp -r ${BASEDIR}/web/* ${TARGET_DIR}/root/web/
+chmod -R 755 ${TARGET_DIR}/root/web/
+
 
 current_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "build time: $current_time" > ${TARGET_DIR}/etc/rversion

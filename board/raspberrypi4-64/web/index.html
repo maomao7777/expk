@@ -1,0 +1,21 @@
+<head>
+Hello maomao expk
+<br></br>
+</head>
+<body>
+<form action="/cgi-bin/set_wireless.sh" method="post">
+    SSID: <input type="text" name="ssid"><br>
+    Password: <input type="text" name="password"><br>
+    <input type="submit" value="Update AP">
+</form>
+<br>
+<form action="/cgi-bin/fwup.sh" method="post" enctype="multipart/form-data">
+    <label for="file">upload firmware to device</label>
+    <input type="file" name="file" id="file" required>
+    <input type="submit" value="upload">
+</form>
+<br>
+<form action="/cgi-bin/reboot.sh" method="post">
+    <input type="submit" value="Apply Reboot">
+</form>
+</body>
