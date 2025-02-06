@@ -1,11 +1,11 @@
 #!/bin/sh
 
-
 IMG_FILE=""
 BOOT_SIZE=32
 ROOTFS_SIZE=120
 
 boot_img="/tmp/boot.vfat"
+rootfs_img="/tmp/rootfs.ext2"
 mnt_dir="/tmp/mntbootlo"
 cmdline_file="$mnt_dir/extlinux/extlinux.conf"
 root_param=$(grep -o 'root=/dev/mmcblk0p[23]' /proc/cmdline)
@@ -43,8 +43,8 @@ if [ ! -f "$IMG_FILE" ]; then
 fi
 
 # take boot.vfat and rootfs.ext2 from rom
-dd if="$IMG_FILE" of=boot.vfat bs=1M count=$BOOT_SIZE
-dd if="$IMG_FILE" of=rootfs.ext2 bs=1M skip=$BOOT_SIZE count=$ROOTFS_SIZE
+dd if="$IMG_FILE" of="$boot_img" bs=1M count=$BOOT_SIZE
+dd if="$IMG_FILE" of="$rootfs_img" bs=1M skip=$BOOT_SIZE count=$ROOTFS_SIZE
 # update boot.vfat bootpart for dual rootfs
 mkdir -p "$mnt_dir"
 mount -o loop "$boot_img" "$mnt_dir"
@@ -63,17 +63,17 @@ umount "$mnt_dir"
 rmdir "$mnt_dir"
 
 #busybox unint script
-sh /etc/init.d/rcK
-umount -a -r -f
+#sh /etc/init.d/rcK
+#umount -a -r -f
 /bin/busybox sleep 1
 
 # write boot partition
-dd if=boot.vfat of=/dev/mmcblk0p1 bs=2M conv=fsync
+dd if="$boot_img" of=/dev/mmcblk0p1 bs=2M conv=fsync
 # write dual rootfs partition
 if [ "$root_param" = "root=/dev/mmcblk0p2" ]; then
-    dd if=rootfs.ext2 of=/dev/mmcblk0p3 bs=2M conv=fsync
+    dd if="$rootfs_img" of=/dev/mmcblk0p3 bs=2M conv=fsync
 else
-    dd if=rootfs.ext2 of=/dev/mmcblk0p2 bs=2M conv=fsync
+    dd if="$rootfs_img" of=/dev/mmcblk0p2 bs=2M conv=fsync
 fi
 
 echo "fwup finished...reboot !!"
