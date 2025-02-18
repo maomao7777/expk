@@ -9,6 +9,11 @@ Hello maomao expk
     <input type="submit" value="Update AP">
 </form>
 <br>
+<form action="/cgi-bin/remote_dev.sh" method="post">
+    Remote Cmd: <input type="text" name="remote_cmd"><br>
+    <input type="submit" value="Remote Device">
+</form>
+<br>
 <form action="/cgi-bin/fwup.sh" method="post" enctype="multipart/form-data">
     <label for="file">upload firmware to device</label>
     <input type="file" name="file" id="file" required>

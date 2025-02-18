@@ -1,41 +1,23 @@
-SILENCE?=@
-PROJECT_NAME            =   frameworkd
-APP_NAME                =   frameworkd
-VERSION                 =   $(shell dpkg-parsechangelog --show-field Version)
+# Main Makefile to execute all subdirectory Makefiles
+SUBDIRS := $(wildcard */)
+TARGET ?= all
 
-# Params define
-PWD                     =   $(shell pwd)
-BUILD_PATH              =   $(PWD)/build
-INCLUDE_DIR             =   $(PWD)
-SRC_DIR                 :=  $(PWD)
-SOURCES                 :=  $(wildcard $(SRC_DIR)/*.c)
-OBJECTS                 :=  $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_PATH)/%.o)
-USR_LIB_SYSTEMD_PATH    ?= /usr/lib/systemd/system
-CFLAGS                  +=  -std=c99                                    \
-                            -I$(PWD)/include
-COMMON_LIBS             =
-MTEST = this is maomao test print
+.PHONY: $(TARGET) clean install $(SUBDIRS)
 
-.PHONY: all
-all: $(BUILD_PATH) $(APP_NAME)
+$(TARGET): $(SUBDIRS)
 
-$(BUILD_PATH):
-	@echo $(MTEST)
-	$(SILENCE)mkdir -p $(BUILD_PATH)
+$(SUBDIRS):
+	@echo "Entering directory $@"
+	@$(MAKE) -C $@ $(TARGET)
+	@echo "Leaving directory $@"
 
-$(OBJECTS): $(BUILD_PATH)/%.o:$(SRC_DIR)/%.c
-	$(SILENCE)$(CC) $(CFLAGS)  -c -o $@ $<
-
-$(APP_NAME): $(OBJECTS)
-	$(SILENCE)$(CC) $(CFLAGS) $(COMMON_LIBS) -o $(BUILD_PATH)/$@ $^
-
-.PHONY: install
-install:
-	$(SILENCE)mkdir -p $(DESTDIR)/sbin
-	$(SILENCE)install $(BUILD_PATH)/$(APP_NAME) $(DESTDIR)/sbin/
-# 	$(SILENCE)mkdir -p $(DESTDIR)/$(USR_LIB_SYSTEMD_PATH)/
-
-
-.PHONY: clean
 clean:
-	$(SILENCE)rm -rf $(BUILD_PATH)
+	@for dir in $(SUBDIRS); do \
+		echo "Cleaning in $$dir"; \
+		$(MAKE) -C $$dir clean; \
+	done
+install:
+	@for dir in $(SUBDIRS); do \
+		echo "install in $$dir"; \
+		$(MAKE) -C $$dir install; \
+	done
