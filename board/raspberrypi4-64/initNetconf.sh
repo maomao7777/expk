@@ -6,6 +6,7 @@ ETHERNET_INTERFACE="eth0"
 INIT_STATIC_IP="192.168.0.15"
 INIT_WL_FILE="/storage/hostapdStor.conf"
 TARGET_WL_LINK="/etc/hostapdTest.conf"
+IS_WL_CONF="/storage/wpa_supplicant.conf"
 
 
 mkdir -p /run/network
@@ -25,6 +26,10 @@ case "$1" in
 	ifconfig $ETHERNET_INTERFACE up
 	ifconfig $BRIDGE_NAME $INIT_STATIC_IP up
 	ifconfig lo up
+	if [ -f "$IS_WL_CONF" ]; then
+	wpa_supplicant -B -i $WIFI_INTERFACE -c $IS_WL_CONF
+	udhcpc -i $WIFI_INTERFACE -s /etc/exdhcpc.script -b
+	else
 	udhcpc -i $BRIDGE_NAME -s /etc/exdhcpc.script -b
 	if [ -f "$INIT_WL_FILE" ]; then
 		if [ -e "$TARGET_WL_LINK" ]; then
@@ -34,11 +39,15 @@ case "$1" in
 		ln -s "$INIT_WL_FILE" "$TARGET_WL_LINK"
 		echo "Linked $INIT_WL_FILE to $TARGET_WL_LINK."
 	else
-    	echo "$INIT_WL_FILE does not exist using orig_df."
+	echo "$INIT_WL_FILE does not exist using orig_df."
 	fi
 	hostapd -B $TARGET_WL_LINK
+	fi
 	httpd -h /root/web -c /etc/httpd.conf -v
 	telnetd
+	rdate -s time.nist.gov &
+	echo "export TZ=\"CST-8\"" > /etc/profile.d/tz.sh
+	mytestd -a &
 	;;
   stop)
 	printf "uninit network config: "

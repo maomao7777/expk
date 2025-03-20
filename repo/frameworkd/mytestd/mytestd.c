@@ -42,6 +42,7 @@ struct _clockstat
     int gpiofd;
     int skfd;
     int ctrlfd;
+    int en_stat;
     struct sockaddr_un ctrl_addr;
     struct tm tinfo;
     pthread_t alarm;
@@ -347,22 +348,22 @@ void* tri_alarm(void *data)
             usleep(period);
         }
 
-        
         pr_sec=tv.tv_sec;
-#endif
+#else
         printf("set gpiofd ---> 0\n");
         write(fd,"0",1);
         sleep(1);
         printf("set gpiofd ---> 1\n");
         write(fd,"1",1);
         sleep(1);
+#endif
     }
 }
 /*-----------------------------------------------------------------------------------------------------------------------*/
 void chk_clockstat(void *eloop_ctx, void *timeout_ctx)
 {
     clockstat* p=(clockstat *)eloop_ctx;
-    if((p->cnet)>0)
+    if(p->en_stat)
     {
         time_t rawtime;
         struct tm* timeinfo;
@@ -420,6 +421,39 @@ void read_event_recv(int socket_fd, void *eloop_ctx, void *timeout_ctx)
                     p->alarm=0;
                     write(p->gpiofd,"0",1);
             }
+            sprintf(rbuf,"%s","ok");
+        }
+        else if(strcmp(string,"get_clock")==0)
+        {
+            time_t rawtime;
+            struct tm* timeinfo;
+            time (&rawtime );
+            timeinfo = localtime(&rawtime);
+            sprintf(rbuf, "now is %02d:%02d",timeinfo->tm_hour,timeinfo->tm_min);
+            sprintf(rbuf+strlen("now is xx:xx")," get_clock is %02d:%02d",p->tinfo.tm_hour,p->tinfo.tm_min);
+        }
+        else if(strncmp(string,"set_clock",strlen("set_clock"))==0)
+        {
+            int h,m;
+            sscanf(string+strlen("set_clock")+1,"%d:%d",&h,&m);
+            if(h>=0&&h<=23)
+                p->tinfo.tm_hour=h;
+            if(m>=0&&m<=59)
+                p->tinfo.tm_min=m;
+            sprintf(rbuf,"%s","ok");
+        }
+        else if(strcmp(string,"get_stat")==0)
+        {
+            sprintf(rbuf,"stat is [%d]",p->en_stat);
+        }
+        else if(strcmp(string,"set_stat 0")==0)
+        {
+            p->en_stat=0;
+            sprintf(rbuf,"%s","ok");
+        }
+        else if(strcmp(string,"set_stat 1")==0)
+        {
+             p->en_stat=1;
             sprintf(rbuf,"%s","ok");
         }
         else if(strcmp(string,"fuck")==0)
@@ -555,6 +589,7 @@ int cfg_serInit(clockstat *p,int ninp,char **inp)
     int pra=1;
     int ret=1;
     int setclok=0;
+    
     while(pra<ninp&&
         strlen(inp[pra]))
     {
@@ -644,7 +679,12 @@ int main(int argc, char** argv)
     }
 #endif
 #endif
-    ctrl_iface_init(p);
+    if(ctrl_iface_init(p) < 0)
+    {
+        perror("can't init ctrl_iface\n");
+        ret=EXIT_FAILURE;
+        goto out;
+    }
 #if 1
 /* create server tcp sk............*/
     if((p->skfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
