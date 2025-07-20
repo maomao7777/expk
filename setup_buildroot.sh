@@ -6,7 +6,7 @@ if [ -z "$1" ] ; then
     exit 1
 fi
 
-TAR_FILE="buildroot-2023.05.tar.gz"
+TAR_FILE="buildroot-2024.02.tar.gz"
 TARGET_NAME="$1"
 PRODUCT_CFG="${2:-rpi4_defconfig}"
 TMP_PRODUCT_CFG_FILE="/tmp/expk_defconfig"
